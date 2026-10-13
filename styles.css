@@ -1,0 +1,21 @@
+:root{
+  --bg:#06070a;
+  --neon:#00f7ff;
+  --accent:#ff33cc;
+  --muted:#9fb0b6;
+}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#020204 0%, #07111a 100%);color:var(--muted);font-family:Inter,Arial,Helvetica,sans-serif}
+canvas{display:block;width:100%;height:100%}
+.overlay{position:fixed;left:0;right:0;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);backdrop-filter:blur(3px);pointer-events:auto}
+.hidden{display:none}
+#startScreen h1{font-size:48px;color:var(--neon);text-shadow:0 0 12px rgba(0,247,255,0.2)}
+#startScreen button, #pauseScreen button{font-size:16px;padding:10px 18px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));color:#e6f7fa;cursor:pointer}
+#hud{pointer-events:none}
+#crosshair{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;color:var(--neon);pointer-events:none;mix-blend-mode:screen}
+#topbar{position:fixed;left:16px;top:12px;display:flex;gap:18px}
+#health{position:fixed;right:16px;top:12px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px}
+#ammo{position:fixed;right:16px;top:56px;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px}
+#hint{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(0,0,0,0.3);padding:6px 10px;border-radius:6px}
+
+/* small responsive tweaks */
+@media (max-width:600px){#crosshair{font-size:20px}#startScreen h1{font-size:36px}}

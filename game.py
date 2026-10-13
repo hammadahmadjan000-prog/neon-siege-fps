@@ -49,20 +49,17 @@ MAP = [
     "#.................E#",
     "#.........#........#",
     "#..................#",
-    "####################"
+    "####################",
 ]
 
-# ------------------------------------------------------------
-# Weapons
-# ------------------------------------------------------------
 WEAPONS = [
     {"name": "Pulse Rifle", "mag": 30, "reserve": 90, "damage": 25, "fire_rate": 0.12, "speed": 18, "spread": 0.04, "reload": 1.2, "pellets": 1, "color": (1.0, 0.85, 0.38)},
     {"name": "Scatter Shot", "mag": 8, "reserve": 24, "damage": 9, "fire_rate": 0.42, "speed": 14, "spread": 0.18, "pellets": 7, "reload": 1.5, "color": (1.0, 0.60, 0.36)},
-    {"name": "Plasma Carbine", "mag": 18, "reserve": 54, "damage": 34, "fire_rate": 0.15, "speed": 22, "spread": 0.02, "reload": 1.5, "pellets": 1, "color": (0.43, 0.96, 1.0)}
+    {"name": "Plasma Carbine", "mag": 18, "reserve": 54, "damage": 34, "fire_rate": 0.15, "speed": 22, "spread": 0.02, "reload": 1.5, "pellets": 1, "color": (0.43, 0.96, 1.0)},
 ]
 
 # ------------------------------------------------------------
-# Player / game state
+# Player and game state
 # ------------------------------------------------------------
 player = {
     "x": 2.5,
@@ -100,8 +97,8 @@ keys = set()
 # ------------------------------------------------------------
 # Utility
 # ------------------------------------------------------------
-def clamp(value, lo, hi):
-    return max(lo, min(value, hi))
+def clamp(v, lo, hi):
+    return max(lo, min(v, hi))
 
 
 def normalize_angle(a):
@@ -128,7 +125,7 @@ def set_message(msg):
     game["message"] = msg
 
 # ------------------------------------------------------------
-# Reset / spawns
+# Reset and spawn functions
 # ------------------------------------------------------------
 def reset_game():
     player["x"] = 2.5
@@ -498,20 +495,31 @@ def set_camera():
     gluLookAt(player["x"], player["y"], player["z"], target_x, target_y, target_z, 0.0, 1.0, 0.0)
 
 
-def draw_3d_scene():
+def draw_start_screen():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    set_camera()
-    draw_floor_grid()
-    draw_walls()
-    draw_enemies()
-    draw_particles()
-    draw_bullets()
-    draw_hud_overlay()
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    glOrtho(0, WIDTH, 0, HEIGHT, -1, 1)
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
+
+    glColor4f(0.06, 0.09, 0.14, 1.0)
+    glBegin(GL_QUADS)
+    glVertex2f(0, 0); glVertex2f(WIDTH, 0); glVertex2f(WIDTH, HEIGHT); glVertex2f(0, HEIGHT)
+    glEnd()
+
+    title = big_font.render("NEON SIEGE", True, (0.43, 0.96, 1.0))
+    subtitle = small_font.render("WASD move • Mouse aim • Click shoot • R reload • Q/E switch • Shift sprint", True, (255, 255, 255))
+    button = pygame.Rect(WIDTH // 2 - 160, HEIGHT // 2 + 80, 320, 60)
+
+    screen.blit(title, (WIDTH // 2 - title.get_width() // 2, HEIGHT // 2 - 120))
+    screen.blit(subtitle, (WIDTH // 2 - subtitle.get_width() // 2, HEIGHT // 2 - 20))
+    pygame.draw.rect(screen, (0.43, 0.96, 1.0), button, border_radius=10)
+    start_text = small_font.render("START MISSION", True, (0, 0, 0))
+    screen.blit(start_text, (WIDTH // 2 - start_text.get_width() // 2, HEIGHT // 2 + 95))
     pygame.display.flip()
 
-# ------------------------------------------------------------
-# 2D HUD overlay
-# ------------------------------------------------------------
+
 def draw_hud_overlay():
     glMatrixMode(GL_PROJECTION)
     glPushMatrix()
@@ -522,8 +530,7 @@ def draw_hud_overlay():
     glPushMatrix()
     glLoadIdentity()
 
-    # health bar
-    glColor4f(0.12, 0.16, 0.2, 1.0)
+    glColor4f(0.12, 0.16, 0.22, 1.0)
     glBegin(GL_QUADS)
     glVertex2f(20, HEIGHT - 50); glVertex2f(240, HEIGHT - 50); glVertex2f(240, HEIGHT - 20); glVertex2f(20, HEIGHT - 20)
     glEnd()
@@ -533,14 +540,12 @@ def draw_hud_overlay():
     glVertex2f(20, HEIGHT - 50); glVertex2f(20 + 220 * (player["health"] / 100), HEIGHT - 50); glVertex2f(20 + 220 * (player["health"] / 100), HEIGHT - 20); glVertex2f(20, HEIGHT - 20)
     glEnd()
 
-    # crosshair
     glColor4f(1.0, 1.0, 1.0, 0.9)
     glBegin(GL_LINES)
     glVertex2f(WIDTH / 2 - 10, HEIGHT / 2); glVertex2f(WIDTH / 2 + 10, HEIGHT / 2)
     glVertex2f(WIDTH / 2, HEIGHT / 2 - 10); glVertex2f(WIDTH / 2, HEIGHT / 2 + 10)
     glEnd()
 
-    # info panel
     glColor4f(0.12, 0.16, 0.22, 0.9)
     glBegin(GL_QUADS)
     glVertex2f(20, 20); glVertex2f(420, 20); glVertex2f(420, 95); glVertex2f(20, 95)
@@ -566,8 +571,8 @@ def draw_hud_overlay():
         overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 160))
         screen.blit(overlay, (0, 0))
-        big = big_font.render("MISSION FAILED", True, (1.0, 0.35, 0.38))
-        screen.blit(big, (WIDTH // 2 - big.get_width() // 2, HEIGHT // 2 - 40))
+        title = big_font.render("MISSION FAILED", True, (1.0, 0.35, 0.38))
+        screen.blit(title, (WIDTH // 2 - title.get_width() // 2, HEIGHT // 2 - 40))
         small = small_font.render("CLICK TO RESTART", True, (255, 255, 255))
         screen.blit(small, (WIDTH // 2 - small.get_width() // 2, HEIGHT // 2 + 30))
 
@@ -578,15 +583,26 @@ def draw_hud_overlay():
         msg = big_font.render("PAUSED", True, (0.43, 0.96, 1.0))
         screen.blit(msg, (WIDTH // 2 - msg.get_width() // 2, HEIGHT // 2 - 20))
 
-# ------------------------------------------------------------
-# Start / flow
-# ------------------------------------------------------------
+
+def draw_3d_scene():
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    set_camera()
+    draw_floor_grid()
+    draw_walls()
+    draw_enemies()
+    draw_particles()
+    draw_bullets()
+    draw_hud_overlay()
+    pygame.display.flip()
+
+
 def start_game():
     reset_game()
     game["started"] = True
     game["paused"] = False
     game["over"] = False
     pygame.mouse.set_visible(False)
+    pygame.event.set_grab(True)
 
 
 def main():
@@ -597,6 +613,13 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type == VIDEORESIZE:
+                global WIDTH, HEIGHT
+                WIDTH, HEIGHT = event.size
+                screen = pygame.display.set_mode((WIDTH, HEIGHT), DOUBLEBUF | OPENGL | RESIZABLE)
+                game["screen_width"] = WIDTH
+                game["screen_height"] = HEIGHT
 
             if event.type == MOUSEBUTTONDOWN:
                 if not game["started"]:
@@ -611,6 +634,10 @@ def main():
 
                 if event.key == K_ESCAPE and game["started"] and not game["over"]:
                     game["paused"] = not game["paused"]
+                    pygame.mouse.set_visible(game["paused"])
+                    if not game["paused"]:
+                        pygame.mouse.set_visible(False)
+                        pygame.event.set_grab(True)
 
                 if event.key == K_r:
                     reload_weapon()
@@ -629,10 +656,14 @@ def main():
                     keys.remove(event.key)
 
             if event.type == MOUSEMOTION:
-                if pygame.mouse.get_focused():
+                if pygame.mouse.get_focused() and game["started"] and not game["paused"] and not game["over"]:
                     dx, dy = event.rel
                     player["yaw"] -= dx * 0.0022
                     player["pitch"] = clamp(player["pitch"] - dy * 0.0017, -1.2, 1.2)
+
+        if not game["started"]:
+            draw_start_screen()
+            continue
 
         if game["started"] and not game["paused"] and not game["over"]:
             if game["reload_timer"] > 0:
@@ -658,4 +689,5 @@ if __name__ == "__main__":
     reset_game()
     game["started"] = False
     pygame.mouse.set_visible(True)
+    pygame.event.set_grab(False)
     main()

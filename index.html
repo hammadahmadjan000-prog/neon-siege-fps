@@ -2,23 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Neon Siege FPS - Upgraded Starter</title>
+  <title>Neon Siege FPS - Elite Upgrade</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="ui">
     <div id="startScreen" class="overlay">
-      <h1>Neon Siege</h1>
-      <p>3D FPS — no game engine. Built with Three.js.</p>
-      <button id="startBtn">Start</button>
-      <label><input type="checkbox" id="enableSound" checked/> Enable sound</label>
+      <div class="panel">
+        <h1>Neon Siege</h1>
+        <p>Elite breach protocol // Three.js FPS</p>
+        <button id="startBtn">Deploy</button>
+        <label class="check"><input type="checkbox" id="enableSound" checked/> Sound</label>
+      </div>
     </div>
 
     <div id="pauseScreen" class="overlay hidden">
-      <h2>Paused</h2>
-      <button id="resumeBtn">Resume</button>
-      <button id="restartBtn">Restart</button>
+      <div class="panel small">
+        <h2>Paused</h2>
+        <button id="resumeBtn">Resume</button>
+        <button id="restartBtn">Restart</button>
+      </div>
+    </div>
+
+    <div id="gameOverScreen" class="overlay hidden">
+      <div class="panel small">
+        <h2>Mission Failed</h2>
+        <p>Score: <span id="finalScore">0</span></p>
+        <button id="againBtn">Retry</button>
+      </div>
     </div>
 
     <div id="hud" class="hidden">
@@ -29,7 +41,7 @@
       </div>
       <div id="health">HP: <span id="hp">100</span></div>
       <div id="ammo">Ammo: <span id="ammoVal">∞</span></div>
-      <div id="hint">Click to lock pointer. WASD to move. Left click to shoot. ESC to unlock.</div>
+      <div id="hint">Click to lock pointer. WASD = move. Space = jump. Left click = fire. Esc = pause.</div>
     </div>
   </div>
 
